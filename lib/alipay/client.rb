@@ -124,9 +124,29 @@ module Alipay
     #   )
     #   # => '{ "alipay_data_dataservice_bill_downloadurl_query_response":{...'
     def execute(params)
-      params = prepare_params(params)
+      # params = prepare_params(params)
+      _url = page_execute_url(params)
 
-      Net::HTTP.post_form(URI(@url), params).body
+      Net::HTTP.get_response(URI(_url)).body
+    end
+
+    # Immediately make a API request to Alipay and return response body.
+    #
+    # Example:
+    #
+    #   alipay_client.execute(
+    #     method: 'alipay.data.dataservice.bill.downloadurl.query',
+    #     biz_content: {
+    #       bill_type: 'trade',
+    #       bill_date: '2016-04-01'
+    #     }.to_json(ascii_only: true)
+    #   )
+    #   # => '{ "alipay_data_dataservice_bill_downloadurl_query_response":{...'
+    def call(params)
+      # params = prepare_params(params)
+      _url = page_execute_url(params)
+
+      Net::HTTP.get_response(URI(_url)).body
     end
 
     # Generate sign for params.
@@ -179,6 +199,7 @@ module Alipay
       params = {
         'app_id' => @app_id,
         'charset' => @charset,
+        'format' => @format,
         'sign_type' => @sign_type,
         'version' => '1.0',
         'timestamp' => Time.now.localtime('+08:00').strftime("%Y-%m-%d %H:%M:%S")
